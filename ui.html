@@ -1,0 +1,75 @@
+<style>
+  @import url("https://use.typekit.net/htq1qjk.css");
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: stratos,sans-serif;
+    min-height: calc(100vh - 20px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .error-container {
+    position: absolute;
+    width: 100%;
+    top: 5px;
+    left: 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .error {
+    display: none;
+  }
+
+  .button-container {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+  }
+  .button-link {
+    text-decoration: none;
+    background-color: rgb(0, 130, 255);
+    color: rgb(255, 255, 255);
+    font-size: 24px;
+    line-height: 32px;
+    border-radius: 8px;
+    padding: 10 32 12;
+    font-family: stratos, sans-serif;
+  }
+  .button-link:hover {
+    background: rgb(0, 200, 115);
+  }
+  .button-link:hover:focus {
+    box-shadow: 0 0 0 5px rgba(0, 200, 115, 0.2)
+  }
+</style>
+<main>
+  <div class="error-container">
+    <p class="error" id="error"></p>
+  </div>
+  <div class="button-container">
+    <a class="button-link" href="" id="download" download>Download</a>
+  </div>
+</main>
+<script>
+onmessage = msg => {
+  let msg_type = msg.data.pluginMessage.pluginMessage.type 
+  if (msg_type === 'img') {
+    let img = msg.data.pluginMessage.pluginMessage.img;
+    let download = document.getElementById('download');
+    let blob = new Blob([img], {type: "image/png"});
+    download.href = window.URL.createObjectURL(blob);
+  }
+  if (msg_type === 'msg') {
+    let error = document.getElementById('error');
+    error.innerText = msg.data.pluginMessage.pluginMessage.text
+    error.style.display = 'block';
+  }
+};
+const button = document.getElementById('download');
+button.addEventListener('click', () => {
+  parent.postMessage({ pluginMessage: { type: 'download' } }, '*')
+});
+</script>
